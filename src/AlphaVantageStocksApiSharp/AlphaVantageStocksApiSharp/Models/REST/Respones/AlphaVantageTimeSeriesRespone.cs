@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Models.REST.Respones
 {
-    public class AlphaVantageIntradayRespone
+    public class AlphaVantageTimeSeriesRespone
     {
         #region Properties
         [JsonProperty("Meta Data")]

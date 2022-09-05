@@ -4,6 +4,8 @@
     {
         NASDAQ,
         NYSE,
+        NYSE_ARCA,
+        NYSE_MKT,
         BATS,
     }
 }

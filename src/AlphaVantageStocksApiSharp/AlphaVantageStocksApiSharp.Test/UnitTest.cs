@@ -58,8 +58,8 @@ namespace AlphaVantageStocksApiSharp.Test
                     }
                 }
                 */
-                var symbols = await client.SearchSymbolsAsync("Merc");
-                var result = await client.GetIntradayAsync(AlphaVantageApiSymbols.IBM);
+                AlphaVantageSymbolSearchRespone symbols = await client.SearchSymbolsAsync("Merc");
+                AlphaVantageTimeSeriesRespone result = await client.GetIntradayAsync(AlphaVantageApiSymbols.IBM);
                 Assert.IsNotNull(result);
                 //Assert.Pass();
             }
@@ -102,7 +102,7 @@ namespace AlphaVantageStocksApiSharp.Test
                 await client.CheckOnlineAsync();
                 Assert.IsTrue(client.IsOnline);
 
-                var cryptoIntradaySeries = await client.GetCryptoIntradayAsync(AlphaVantageApiSymbols.Etherum, AlphaVantageApiMarkets.UnitedStatesDollar);
+                var cryptoIntradaySeries = await client.GetCryptoIntradayAsync(AlphaVantageApiSymbols.Ethereum, AlphaVantageApiMarkets.UnitedStatesDollar);
                 Assert.IsTrue(cryptoIntradaySeries?.TimeSeries?.Count > 0);
 
                 var cryptoTimeSeries = await client.GetCryptoTimeSeriesAsync(AlphaVantageApiSymbols.Bitcoin, AlphaVantageApiMarkets.UnitedStatesDollar, AlphaVantageApiCryptoTimeSeriesIntervals.Daily);

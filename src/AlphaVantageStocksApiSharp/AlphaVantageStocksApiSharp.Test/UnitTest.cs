@@ -40,6 +40,8 @@ namespace AlphaVantageStocksApiSharp.Test
                 //var dow = await client.SearchSymbolsAsync("DOW");
                 var series = await client.GetTimeSeriesAsync(AlphaVantageApiSymbols.MercedesBenzGroupAG, AlphaVantageApiTimeSeriesIntervals.Weekly);
 
+                // Overloads API and leads to a temp. lock
+                /*
                 for (int i = 65; i < 65 + 26; i++)
                 {
                     char first = (char)i;
@@ -55,11 +57,79 @@ namespace AlphaVantageStocksApiSharp.Test
                         await Task.Delay(100);
                     }
                 }
-
+                */
                 var symbols = await client.SearchSymbolsAsync("Merc");
                 var result = await client.GetIntradayAsync(AlphaVantageApiSymbols.IBM);
                 Assert.IsNotNull(result);
                 //Assert.Pass();
+            }
+            catch(Exception exc)
+            {
+                Assert.Fail(exc.Message);
+            }
+        }
+
+        [Test]
+        public async Task QuoteEndpointTestAsync()
+        {
+            try
+            {
+                AlphaVantageClient client = new AlphaVantageClient.AlphaVantageConnectionBuilder()
+                    .WithWebAddressAndApiKey(webAddress: web, apiKey: api)
+                    .Build();
+                Assert.IsNotNull(client);
+                await client.CheckOnlineAsync();
+                Assert.IsTrue(client.IsOnline);
+
+                var quotes = await client.GetQuoteEndpointAsync(AlphaVantageApiSymbols.MercedesBenzGroupAG);
+                Assert.IsNotNull(quotes);
+            }
+            catch(Exception exc)
+            {
+                Assert.Fail(exc.Message);
+            }
+        }
+
+        [Test]
+        public async Task CryptoTestAsync()
+        {
+            try
+            {
+                AlphaVantageClient client = new AlphaVantageClient.AlphaVantageConnectionBuilder()
+                    .WithWebAddressAndApiKey(webAddress: web, apiKey: api)
+                    .Build();
+                Assert.IsNotNull(client);
+                await client.CheckOnlineAsync();
+                Assert.IsTrue(client.IsOnline);
+
+                var cryptoIntradaySeries = await client.GetCryptoIntradayAsync(AlphaVantageApiSymbols.Etherum, AlphaVantageApiMarkets.UnitedStatesDollar);
+                Assert.IsTrue(cryptoIntradaySeries?.TimeSeries?.Count > 0);
+
+                var cryptoTimeSeries = await client.GetCryptoTimeSeriesAsync(AlphaVantageApiSymbols.Bitcoin, AlphaVantageApiMarkets.UnitedStatesDollar, AlphaVantageApiCryptoTimeSeriesIntervals.Daily);
+                Assert.IsTrue(cryptoTimeSeries?.TimeSeries?.Count > 0);
+            }
+            catch(Exception exc)
+            {
+                Assert.Fail(exc.Message);
+            }
+        }
+
+        [Test]
+        public async Task FundamentalDataTestAsync()
+        {
+            try
+            {
+                AlphaVantageClient client = new AlphaVantageClient.AlphaVantageConnectionBuilder()
+                    .WithWebAddressAndApiKey(webAddress: web, apiKey: api)
+                    .Build();
+                Assert.IsNotNull(client);
+                await client.CheckOnlineAsync();
+                Assert.IsTrue(client.IsOnline);
+
+                var companyOverviewData = await client.GetCompanyOverviewAsync(AlphaVantageApiSymbols.IBM);
+                Assert.IsNotNull(companyOverviewData);
+
+
             }
             catch(Exception exc)
             {

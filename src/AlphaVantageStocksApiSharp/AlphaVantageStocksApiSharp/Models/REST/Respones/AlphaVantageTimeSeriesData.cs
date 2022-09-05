@@ -18,8 +18,7 @@ namespace AndreasReitberger.API.Models.REST.Respones
         public double? Close { get; set; }
 
         [JsonProperty("5. volume")]
-        //[JsonConverter(typeof(ParseStringConverter))]
-        public long Volume { get; set; }
+        public double? Volume { get; set; }
 
         #endregion
 

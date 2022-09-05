@@ -342,7 +342,7 @@ namespace AndreasReitberger.API
                 RestClientOptions options = new(Address)
                 {
                     ThrowOnAnyError = true,
-                    Timeout = 10000,
+                    MaxTimeout = 10000,
                 };
                 HttpClientHandler httpHandler = new()
                 {
@@ -673,6 +673,7 @@ namespace AndreasReitberger.API
 
         #region Public
 
+        #region Core Stocks APIs
         public async Task<List<AlphaVantageSymbolInfo>> GetUSSTocksAsync()
         {
             List<AlphaVantageSymbolInfo> returnValue = new();
@@ -772,12 +773,12 @@ namespace AndreasReitberger.API
                     TargetType = nameof(IsOnline),
                     Message = jecx.Message,
                 });
-                return new AlphaVantageSymbolSearchRespone();
+                return new();
             }
             catch (Exception exc)
             {
                 OnError(new UnhandledExceptionEventArgs(exc, false));
-                return new AlphaVantageSymbolSearchRespone();
+                return new();
             }
         }
         
@@ -831,12 +832,12 @@ namespace AndreasReitberger.API
                     TargetType = nameof(IsOnline),
                     Message = jecx.Message,
                 });
-                return new AlphaVantageTimeSeriesRespone();
+                return new();
             }
             catch (Exception exc)
             {
                 OnError(new UnhandledExceptionEventArgs(exc, false));
-                return new AlphaVantageTimeSeriesRespone();
+                return new();
             }
         }
 
@@ -888,14 +889,208 @@ namespace AndreasReitberger.API
                     TargetType = nameof(IsOnline),
                     Message = jecx.Message,
                 });
-                return new AlphaVantageTimeSeriesRespone();
+                return new();
             }
             catch (Exception exc)
             {
                 OnError(new UnhandledExceptionEventArgs(exc, false));
-                return new AlphaVantageTimeSeriesRespone();
+                return new();
             }
         }
+        
+        public async Task<AlphaVantageGlobalQuoteRespone> GetQuoteEndpointAsync(string symbol)
+        {
+            AlphaVantageApiRequestRespone result = new();
+            try
+            {
+                Dictionary<string, string> parameters = new()
+                {
+                    { "symbol", symbol },
+                    { "datatype", AlphaVantageApiDataTypes.Json.ToString().ToLower() }
+                };
+                AlphaVantageApiFunctions function = AlphaVantageApiFunctions.GLOBAL_QUOTE;
+                result = await SendRestApiRequestAsync(
+                   function: function,
+                   additionalParameters: parameters
+                   )
+                    .ConfigureAwait(false);
+                result.Result = result.Result.Replace("%", string.Empty);
+                AlphaVantageGlobalQuoteRespone info = JsonConvert.DeserializeObject<AlphaVantageGlobalQuoteRespone>(result.Result);
+                return info;
+            }
+            catch (JsonException jecx)
+            {
+                OnError(new AlphaVantageJsonConvertEventArgs()
+                {
+                    Exception = jecx,
+                    OriginalString = result.Result,
+                    TargetType = nameof(IsOnline),
+                    Message = jecx.Message,
+                });
+                return new();
+            }
+            catch (Exception exc)
+            {
+                OnError(new UnhandledExceptionEventArgs(exc, false));
+                return new();
+            }
+        }
+
+        #endregion
+
+        #region Fundamental Data
+        public async Task<AlphaVantageCompanyOverviewRespone> GetCompanyOverviewAsync(string symbol)
+        {
+            AlphaVantageApiRequestRespone result = new();
+            try
+            {
+                Dictionary<string, string> parameters = new()
+                {
+                    { "symbol", symbol },
+                    //{ "datatype", AlphaVantageApiDataTypes.Json.ToString().ToLower() }
+                };
+                AlphaVantageApiFunctions function = AlphaVantageApiFunctions.OVERVIEW;
+                result = await SendRestApiRequestAsync(
+                   function: function,
+                   additionalParameters: parameters
+                   )
+                    .ConfigureAwait(false);
+                //result.Result = result.Result.Replace("%", string.Empty);
+                AlphaVantageCompanyOverviewRespone info = JsonConvert.DeserializeObject<AlphaVantageCompanyOverviewRespone>(result.Result);
+                return info;
+            }
+            catch (JsonException jecx)
+            {
+                OnError(new AlphaVantageJsonConvertEventArgs()
+                {
+                    Exception = jecx,
+                    OriginalString = result.Result,
+                    TargetType = nameof(IsOnline),
+                    Message = jecx.Message,
+                });
+                return new();
+            }
+            catch (Exception exc)
+            {
+                OnError(new UnhandledExceptionEventArgs(exc, false));
+                return new();
+            }
+        }
+        #endregion
+
+        #region CryptoCurrencies
+        public async Task<AlphaVantageCryptoTimeSeriesRespone> GetCryptoIntradayAsync(string symbol, string market, AlphaVantageApiIntervals interval = AlphaVantageApiIntervals.Min1)
+        {
+            AlphaVantageApiRequestRespone result = new();
+            try
+            {
+                Dictionary<string, string> parameters = new()
+                {
+                    { "symbol", symbol },
+                    { "market", market },
+                    { "datatype", AlphaVantageApiDataTypes.Json.ToString().ToLower() }
+                };
+                string key = "interval";
+                switch (interval)
+                {
+                    case AlphaVantageApiIntervals.Min1:
+                        parameters.Add(key, "1min");
+                        break;
+                    case AlphaVantageApiIntervals.Min5:
+                        parameters.Add(key, "5min");
+                        break;
+                    case AlphaVantageApiIntervals.Min15:
+                        parameters.Add(key, "15min");
+                        break;
+                    case AlphaVantageApiIntervals.Min30:
+                        parameters.Add(key, "30min");
+                        break;
+                    case AlphaVantageApiIntervals.Min60:
+                        parameters.Add(key, "60min");
+                        break;
+                    default:
+                        break;
+                }
+
+                result = await SendRestApiRequestAsync(
+                   function: AlphaVantageApiFunctions.CRYPTO_INTRADAY,
+                   additionalParameters: parameters
+                   )
+                    .ConfigureAwait(false);
+                result.Result = result.Result
+                    .Replace($" ({parameters["interval"]})", string.Empty)
+                    .Replace(" Crypto", string.Empty);
+                AlphaVantageCryptoTimeSeriesRespone info = JsonConvert.DeserializeObject<AlphaVantageCryptoTimeSeriesRespone>(result.Result);
+                return info;
+            }
+            catch (JsonException jecx)
+            {
+                OnError(new AlphaVantageJsonConvertEventArgs()
+                {
+                    Exception = jecx,
+                    OriginalString = result.Result,
+                    TargetType = nameof(IsOnline),
+                    Message = jecx.Message,
+                });
+                return new();
+            }
+            catch (Exception exc)
+            {
+                OnError(new UnhandledExceptionEventArgs(exc, false));
+                return new();
+            }
+        }
+        public async Task<AlphaVantageCryptoExtTimeSeriesRespone> GetCryptoTimeSeriesAsync(string symbol, string market, AlphaVantageApiCryptoTimeSeriesIntervals interval = AlphaVantageApiCryptoTimeSeriesIntervals.Daily)
+        {
+            AlphaVantageApiRequestRespone result = new();
+            try
+            {
+                Dictionary<string, string> parameters = new()
+                {
+                    { "symbol", symbol },
+                    { "market", market },
+                    { "datatype", AlphaVantageApiDataTypes.Json.ToString().ToLower() }
+                };
+                AlphaVantageApiFunctions function = AlphaVantageApiFunctions.DIGITAL_CURRENCY_DAILY;
+                function = interval switch
+                {
+                    AlphaVantageApiCryptoTimeSeriesIntervals.Daily => AlphaVantageApiFunctions.DIGITAL_CURRENCY_DAILY,
+                    AlphaVantageApiCryptoTimeSeriesIntervals.Weekly => AlphaVantageApiFunctions.DIGITAL_CURRENCY_WEEKLY,
+                    AlphaVantageApiCryptoTimeSeriesIntervals.Monthly => AlphaVantageApiFunctions.DIGITAL_CURRENCY_MONTHLY,
+                    _ => AlphaVantageApiFunctions.TIME_SERIES_DAILY,
+                };
+                result = await SendRestApiRequestAsync(
+                   function: function,
+                   additionalParameters: parameters
+                   )
+                    .ConfigureAwait(false);
+                result.Result = result.Result
+                    .Replace($" (Digital Currency Daily)", string.Empty)
+                    .Replace($" (Digital Currency Weekly)", string.Empty)
+                    .Replace($" (Digital Currency Monthly)", string.Empty)
+                    .Replace($" ({market})", string.Empty);
+                AlphaVantageCryptoExtTimeSeriesRespone info = JsonConvert.DeserializeObject<AlphaVantageCryptoExtTimeSeriesRespone>(result.Result);
+                return info;
+            }
+            catch (JsonException jecx)
+            {
+                OnError(new AlphaVantageJsonConvertEventArgs()
+                {
+                    Exception = jecx,
+                    OriginalString = result.Result,
+                    TargetType = nameof(IsOnline),
+                    Message = jecx.Message,
+                });
+                return new();
+            }
+            catch (Exception exc)
+            {
+                OnError(new UnhandledExceptionEventArgs(exc, false));
+                return new();
+            }
+        }
+
+        #endregion
 
         #endregion
 

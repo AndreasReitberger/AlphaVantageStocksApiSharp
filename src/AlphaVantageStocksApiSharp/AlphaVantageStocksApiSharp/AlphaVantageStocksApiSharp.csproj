@@ -12,4 +12,10 @@
     <PackageReference Include="System.Memory" Version="4.5.5" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Data\Indicies.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

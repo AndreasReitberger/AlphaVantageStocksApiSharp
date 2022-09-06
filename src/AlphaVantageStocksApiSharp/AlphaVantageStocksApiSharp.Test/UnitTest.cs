@@ -9,6 +9,9 @@ using System.Text;
 using System.Diagnostics;
 using System.Linq;
 using AndreasReitberger.API.Enums;
+using System.IO;
+using Newtonsoft.Json;
+using AndreasReitberger.API.Models.JSON;
 
 namespace AlphaVantageStocksApiSharp.Test
 {
@@ -132,6 +135,44 @@ namespace AlphaVantageStocksApiSharp.Test
 
             }
             catch(Exception exc)
+            {
+                Assert.Fail(exc.Message);
+            }
+        }
+
+        [Test]
+        public async Task LoadIndiciesFromFileTestAsync()
+        {
+            try
+            {
+                AlphaVantageClient client = new AlphaVantageClient.AlphaVantageConnectionBuilder()
+                    .WithWebAddressAndApiKey(webAddress: web, apiKey: api)
+                    .Build();
+                Assert.IsNotNull(client);
+                await client.CheckOnlineAsync();
+                Assert.IsTrue(client.IsOnline);
+
+                using var fs = new FileStream(@"..\..\..\..\AlphaVantageStocksApiSharp\bin\Debug\netstandard2.1\Data\Indicies.json", FileMode.Open);
+                using var sr = new StreamReader(fs);
+
+                string jsonFile = await sr.ReadToEndAsync();
+                GlobalStockIndicies indicies = JsonConvert.DeserializeObject<GlobalStockIndicies>(jsonFile);
+
+                foreach(KeyValuePair<string, List<StockInfo>> indicie in indicies?.GlobalIndicies)
+                {
+                    foreach (StockInfo stock in indicie.Value)
+                    {
+                        AlphaVantageSymbolSearchRespone searchResult = await client.SearchSymbolsAsync($"{stock.Name}");
+                        foreach(var result in searchResult.BestMatches)
+                        {
+                            Debug.WriteLine($"{indicie.Key} - {stock.Name}: {result.Name}; {result.Symbol}; {result.Region}");
+                        }
+                        // Do not overload api calls 
+                        await Task.Delay(5000);
+                    }
+                }
+            }
+            catch (Exception exc)
             {
                 Assert.Fail(exc.Message);
             }

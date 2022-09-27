@@ -781,7 +781,15 @@ namespace AndreasReitberger.API
                 return new();
             }
         }
-        
+
+        /// <summary>
+        /// This API returns intraday time series of the equity specified, covering extended trading hours where applicable
+        /// (e.g., 4:00am to 8:00pm Eastern Time for the US market). The intraday data is derived from the Securities Information Processor (SIP)
+        /// market-aggregated data. You can query both raw (as-traded) and split/dividend-adjusted intraday data from this endpoint.
+        /// </summary>
+        /// <param name="symbol"></param>
+        /// <param name="interval"></param>
+        /// <returns></returns>
         public async Task<AlphaVantageTimeSeriesRespone> GetIntradayAsync(string symbol, AlphaVantageApiIntervals interval = AlphaVantageApiIntervals.Min1)
         {
             AlphaVantageApiRequestRespone result = new();
@@ -848,7 +856,16 @@ namespace AndreasReitberger.API
         }
         */
 
-        public async Task<AlphaVantageTimeSeriesRespone> GetTimeSeriesAsync(string symbol, AlphaVantageApiTimeSeriesIntervals interval = AlphaVantageApiTimeSeriesIntervals.Daily)
+        /// <summary>
+        /// This API returns raw (as-traded) daily time series (date, daily open, daily high, daily low, daily close, daily volume)
+        /// of the global equity specified, covering 20+ years of historical data. If you are also interested in split/dividend-adjusted historical data,
+        /// please use the Daily Adjusted API, which covers adjusted close values and historical split and dividend events.
+        /// </summary>
+        /// <param name="symbol"></param>
+        /// <param name="interval"></param>
+        /// <param name="outputsize"></param>
+        /// <returns></returns>
+        public async Task<AlphaVantageTimeSeriesRespone> GetTimeSeriesAsync(string symbol, AlphaVantageApiTimeSeriesIntervals interval = AlphaVantageApiTimeSeriesIntervals.Daily, string outputsize = "compact")
         {
             AlphaVantageApiRequestRespone result = new();
             try
@@ -856,7 +873,8 @@ namespace AndreasReitberger.API
                 Dictionary<string, string> parameters = new()
                 {
                     { "symbol", symbol },
-                    { "datatype", AlphaVantageApiDataTypes.Json.ToString().ToLower() }
+                    { "datatype", AlphaVantageApiDataTypes.Json.ToString().ToLower() },
+                    { "outputsize", outputsize },
                 };
                 AlphaVantageApiFunctions function = AlphaVantageApiFunctions.TIME_SERIES_DAILY;
                 function = interval switch
@@ -875,8 +893,11 @@ namespace AndreasReitberger.API
                     .ConfigureAwait(false);
                 result.Result = result.Result
                     .Replace($"Daily ", string.Empty)
+                    .Replace($" (Daily)", string.Empty)
                     .Replace($"Weekly ", string.Empty)
-                    .Replace($"Monthly ", string.Empty);
+                    .Replace($" (Weekly)", string.Empty)
+                    .Replace($"Monthly ", string.Empty)
+                    .Replace($" (Monthly)", string.Empty);
                 AlphaVantageTimeSeriesRespone info = JsonConvert.DeserializeObject<AlphaVantageTimeSeriesRespone>(result.Result);
                 return info;
             }

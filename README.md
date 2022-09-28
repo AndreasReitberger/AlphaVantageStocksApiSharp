@@ -2,6 +2,7 @@
 A C# wrapper around the Alpha Vantage Stocks API (https://www.alphavantage.co/documentation/)
 
 # Usage
+Some usage examples.
 
 ## Create a client
 In order to create a `AlphaVantageClient` you either can create a new instance of it, or yous the `AlphaVantageConnectionBuilder`.

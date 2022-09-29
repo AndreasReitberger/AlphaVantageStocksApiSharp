@@ -1,6 +1,11 @@
 # AlphaVantageStocksApiSharp
 A C# wrapper around the Alpha Vantage Stocks API (https://www.alphavantage.co/documentation/)
 
+# Nuget
+Get the latest version from nuget.org<br>
+[![NuGet](https://img.shields.io/nuget/v/AlphaVantageStocksApiSharp.svg?style=flat-square&label=nuget)](https://www.nuget.org/packages/AlphaVantageStocksApiSharp/)
+[![NuGet](https://img.shields.io/nuget/dt/AlphaVantageStocksApiSharp.svg)](https://www.nuget.org/packages/AlphaVantageStocksApiSharp)
+
 # Usage
 Some usage examples.
 

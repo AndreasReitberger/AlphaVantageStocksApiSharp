@@ -18,26 +18,26 @@ namespace AndreasReitberger.API
             {
                 return _client;
             }
-           
+
             public AlphaVantageConnectionBuilder WithWebAddress(string webAddress)
             {
                 _client.Address = webAddress;
                 return this;
             }
-            
+
             public AlphaVantageConnectionBuilder WithApiKey(string apiKey)
             {
                 _client.ApiKey = apiKey;
                 return this;
             }
-            
+
             public AlphaVantageConnectionBuilder WithWebAddressAndApiKey(string webAddress, string apiKey)
             {
                 _client.Address = webAddress;
                 _client.ApiKey = apiKey;
                 return this;
             }
-            
+
             #endregion
         }
     }

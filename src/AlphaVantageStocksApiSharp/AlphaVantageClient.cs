@@ -450,7 +450,7 @@ namespace AndreasReitberger.API
                 }
                 RestRequest request = new(
                     string.IsNullOrEmpty(requestTargetUri) ?
-                    "query":
+                    "query" :
                     requestTargetUri)
                 {
                     RequestFormat = DataFormat.Json,
@@ -466,7 +466,7 @@ namespace AndreasReitberger.API
                 */
                 if (additionalParameters?.Count > 0)
                 {
-                    foreach(KeyValuePair<string, string> paramter in additionalParameters)
+                    foreach (KeyValuePair<string, string> paramter in additionalParameters)
                     {
                         request.AddParameter(paramter.Key, paramter.Value, ParameterType.QueryString);
                     }
@@ -481,7 +481,7 @@ namespace AndreasReitberger.API
                 {
                     jsonDataString = JsonConvert.SerializeObject(jsonObject);
                 }
-                if(!string.IsNullOrEmpty(jsonDataString))
+                if (!string.IsNullOrEmpty(jsonDataString))
                 {
                     _ = request.AddParameter("data", jsonDataString, ParameterType.QueryString);
                 }
@@ -490,7 +490,7 @@ namespace AndreasReitberger.API
                 {
                     request.AddParameter("apikey", ApiKey, ParameterType.QueryString);
                 }
-                else 
+                else
                 {
                     request.AddParameter("apikey", "demo", ParameterType.QueryString);
                 }
@@ -695,7 +695,7 @@ namespace AndreasReitberger.API
                 var lines = result.Result.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries)
                     .Skip(1) // Skip header line
                     .ToList();
-                for(int i = 0; lines.Count > 0; i++)
+                for (int i = 0; lines.Count > 0; i++)
                 {
                     var entry = lines[i].Split(',');
                     try
@@ -708,17 +708,17 @@ namespace AndreasReitberger.API
                             AssetType = entry[3],
                             Status = entry[6],
                         };
-                        if(!string.IsNullOrEmpty(entry[4]) && entry[4] != "null")
+                        if (!string.IsNullOrEmpty(entry[4]) && entry[4] != "null")
                         {
                             info.IpoDate = DateTime.Parse(entry[4]);
                         }
-                        if(!string.IsNullOrEmpty(entry[5]) && entry[5] != "null")
+                        if (!string.IsNullOrEmpty(entry[5]) && entry[5] != "null")
                         {
                             info.DelistingDate = DateTime.Parse(entry[5]);
                         }
                         returnValue.Add(info);
                     }
-                    catch(Exception exc)
+                    catch (Exception exc)
                     {
                         OnError(new UnhandledExceptionEventArgs(exc, false));
                         continue;
@@ -918,7 +918,7 @@ namespace AndreasReitberger.API
                 return new();
             }
         }
-        
+
         public async Task<AlphaVantageGlobalQuoteRespone> GetQuoteEndpointAsync(string symbol)
         {
             AlphaVantageApiRequestRespone result = new();

@@ -66,7 +66,7 @@ namespace AlphaVantageStocksApiSharp.Test
                 Assert.IsNotNull(result);
                 //Assert.Pass();
             }
-            catch(Exception exc)
+            catch (Exception exc)
             {
                 Assert.Fail(exc.Message);
             }
@@ -87,7 +87,7 @@ namespace AlphaVantageStocksApiSharp.Test
                 var quotes = await client.GetQuoteEndpointAsync(AlphaVantageApiSymbols.MercedesBenzGroupAG);
                 Assert.IsNotNull(quotes);
             }
-            catch(Exception exc)
+            catch (Exception exc)
             {
                 Assert.Fail(exc.Message);
             }
@@ -111,7 +111,7 @@ namespace AlphaVantageStocksApiSharp.Test
                 var cryptoTimeSeries = await client.GetCryptoTimeSeriesAsync(AlphaVantageApiSymbols.Bitcoin, AlphaVantageApiMarkets.UnitedStatesDollar, AlphaVantageApiCryptoTimeSeriesIntervals.Daily);
                 Assert.IsTrue(cryptoTimeSeries?.TimeSeries?.Count > 0);
             }
-            catch(Exception exc)
+            catch (Exception exc)
             {
                 Assert.Fail(exc.Message);
             }
@@ -134,7 +134,7 @@ namespace AlphaVantageStocksApiSharp.Test
 
 
             }
-            catch(Exception exc)
+            catch (Exception exc)
             {
                 Assert.Fail(exc.Message);
             }
@@ -158,12 +158,12 @@ namespace AlphaVantageStocksApiSharp.Test
                 string jsonFile = await sr.ReadToEndAsync();
                 GlobalStockIndicies indicies = JsonConvert.DeserializeObject<GlobalStockIndicies>(jsonFile);
 
-                foreach(KeyValuePair<string, List<StockInfo>> indicie in indicies?.GlobalIndicies)
+                foreach (KeyValuePair<string, List<StockInfo>> indicie in indicies?.GlobalIndicies)
                 {
                     foreach (StockInfo stock in indicie.Value)
                     {
                         AlphaVantageSymbolSearchRespone searchResult = await client.SearchSymbolsAsync($"{stock.Name}");
-                        foreach(var result in searchResult.BestMatches)
+                        foreach (var result in searchResult.BestMatches)
                         {
                             Debug.WriteLine($"{indicie.Key} - {stock.Name}: {result.Name}; {result.Symbol}; {result.Region}");
                         }

@@ -32,7 +32,7 @@ namespace AndreasReitberger.API.Models.REST.Respones
 
         [JsonProperty("9. Time Zone")]
         public string TimeZone { get; set; }
-    
+
         #endregion
 
         #region Overrides

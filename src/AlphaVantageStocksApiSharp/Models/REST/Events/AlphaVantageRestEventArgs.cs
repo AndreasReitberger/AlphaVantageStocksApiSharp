@@ -2,7 +2,7 @@
 
 namespace AndreasReitberger.API.Models.REST.Events
 {
-    public class AlphaVantageRestEventArgs: EventArgs
+    public class AlphaVantageRestEventArgs : EventArgs
     {
         #region Properties
         public string Message { get; set; }

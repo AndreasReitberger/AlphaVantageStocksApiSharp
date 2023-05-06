@@ -20,7 +20,7 @@
 
   <ItemGroup>
     <PackageReference Include="RCoreSharp" Version="1.0.9" />
-    <PackageReference Include="RestSharp" Version="108.0.3" />
+    <PackageReference Include="RestSharp" Version="110.2.0" />
     <PackageReference Include="System.Memory" Version="4.5.5" />
 	<None Include="..\..\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
